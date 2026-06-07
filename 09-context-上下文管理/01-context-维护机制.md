@@ -90,7 +90,7 @@ OpenClaw 用两层持久化维护会话状态：
   -> sessionKey 路由
   -> sessionId 选择
   -> transcript append
-  -> runEmbeddedPiAgent
+  -> runEmbeddedAgent
 ```
 
 其中：
@@ -147,7 +147,7 @@ OpenClaw 用两层持久化维护会话状态：
 
 在 OpenClaw 里，assistant 的输出通常分为三层：
 
-1. Pi runtime 内部事件
+1. agent runtime 内部事件
    - `message_start` / `message_update` / `message_end`
    - `tool_execution_start` / `tool_execution_update` / `tool_execution_end`
    - `turn` / `agent` lifecycle
@@ -298,10 +298,12 @@ system prompt
 - provider wrappers / hidden headers
 - tool schemas JSON
 
-这也是为什么 OpenClaw 要专门提供：
-- `/status`
-- `/context list`
-- `/context detail`
+这也是为什么 OpenClaw 要专门提供这组观测命令（2026-06 当前实现）：
+- `/status` —— context 窗口占用 + 当前 session 设置
+- `/context list` —— 注入文件与粗略体积
+- `/context detail` —— 按文件 / 按 tool / 按 skill 的细分
+- `/context map` —— treemap 可视化（较新）
+- `/usage tokens` —— 每条回复末尾的 token footer
 
 来拆分这些开销。
 
@@ -340,7 +342,7 @@ compaction summary
 
 ### 7.3 触发条件
 
-embedded Pi runtime 下，auto-compaction 主要有两个触发条件：
+embedded agent runtime 下，auto-compaction 主要有两个触发条件：
 
 1. overflow recovery
    - provider 返回 context overflow 一类错误
@@ -351,7 +353,7 @@ embedded Pi runtime 下，auto-compaction 主要有两个触发条件：
    - 若 `contextTokens > contextWindow - reserveTokens`
    - 则进入压缩维护
 
-注意这里官方文档明确说：这套触发语义由 Pi runtime 决定，OpenClaw 消费这些事件并配合状态维护。
+注意这里官方文档明确说：这套触发语义由 agent runtime 决定，OpenClaw 消费这些事件并配合状态维护。
 
 ### 7.4 切块时会保护 tool call / toolResult 配对
 
@@ -369,7 +371,7 @@ embedded Pi runtime 下，auto-compaction 主要有两个触发条件：
 
 ### 7.5 关键参数
 
-官方 deep dive 给出的 Pi compaction 典型设置是：
+官方 deep dive 给出的 compaction 典型设置是：
 
 ```json
 {
@@ -402,7 +404,7 @@ OpenClaw 还会额外做一层安全兜底：
 
 ### 7.7 Context engine 可以替换 compaction
 
-默认是 `legacy` engine，但官方文档明确支持 context-engine plugin：
+默认是 `legacy` engine（除非有插件提供 `kind: "context-engine"`），通过 `plugins.slots.contextEngine` 选择自定义引擎。官方文档明确支持 context-engine plugin：
 - `assemble()`
 - `compact()`
 - `systemPromptAddition`

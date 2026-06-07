@@ -38,9 +38,14 @@ agent run
 ```
 
 这里最值得记住的是三件事：
-- `system prompt` 是 OpenClaw owned，不直接复用底层 provider 或 Pi SDK 的默认提示词
+- `system prompt` 是 OpenClaw owned，不直接复用底层 provider 或 agent runtime 的默认提示词
 - prompt 的 section 是按运行时问题组织的，不是按知识目录组织的
 - prompt cache 是一等约束，稳定内容和易变内容会被刻意拆开
 
+> **最新实现校正（2026-06-07）**：两点补充。
+> 1. **构建是三层**：`buildAgentSystemPrompt`（纯渲染器）+ `resolveAgentSystemPromptConfig`（解析 owner 显示、TTS、model alias、memory citation、delegation 等 config 旋钮）+ runtime adapters（采集 live 事实后调用 prompt facade）。
+> 2. **Codex harness 例外**：当 runtime 为 `codex` 时，它不在每轮重复粘贴稳定文件——Codex 内部加载 `AGENTS.md`，其余 workspace 文件（`SOUL.md` / `IDENTITY.md` / `TOOLS.md` / `USER.md`）作为 developer instructions 下发；非 Codex harness 才把 bootstrap 文件正常拼进 prompt。另外 native Codex approval-card 已集成，prompt 会优先引导用原生审批 UI。详见 [04-cache-provider-安全边界.md](./04-cache-provider-安全边界.md) 与记忆专题 [../20-memory-记忆系统/02-加载-vs-检索.md](../20-memory-记忆系统/02-加载-vs-检索.md)。
+
 快照时间：
 - 本目录整理时间：2026-05-17
+- 最近一次按最新实现校正：2026-06-07

@@ -23,3 +23,4 @@ OpenClaw 的 context 不是“聊天历史字符串”，
 
 快照时间：
 - 本目录整理时间：2026-05-03
+- 最近一次按最新实现校正：2026-06-07（去 Pi 化为可插拔 agent runtime；补 `/context map`、`/usage tokens`、`plugins.slots.contextEngine`）
