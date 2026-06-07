@@ -37,6 +37,8 @@
 - [09-context-上下文管理/README.md](/Users/seaya/huquan.95/project-4/open_claw/09-context-上下文管理/README.md)
 - [09-context-上下文管理/01-context-维护机制.md](/Users/seaya/huquan.95/project-4/open_claw/09-context-上下文管理/01-context-维护机制.md)
 - [09-context-上下文管理/02-system-prompt-设计.md](/Users/seaya/huquan.95/project-4/open_claw/09-context-上下文管理/02-system-prompt-设计.md)
+- [19-system-prompt-实现详解/README.md](/Users/seaya/huquan.95/project-4/open_claw/19-system-prompt-实现详解/README.md)
+- [20-memory-记忆系统/README.md](/Users/seaya/huquan.95/project-4/open_claw/20-memory-记忆系统/README.md) —— 记忆分层、加载 vs 检索、compaction flush、dreaming 固化、理论依据
 
 最短摘要：
 - OpenClaw 不是单一 CLI，而是一个把 `gateway`、`agent loop`、`session/group state`、`channel/provider/plugin`、`control UI` 组合到一起的 agent 平台。
